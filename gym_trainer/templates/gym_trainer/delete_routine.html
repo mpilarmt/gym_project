@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Confirmar Eliminació</h1>
+    <p>Estàs segur que vols eliminar la rutina "{{ routine.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'gym_trainer:routine_list' %}" class="btn btn-secondary">Cancel·lar</a>
+    </form>
+</div>
+{% endblock %}

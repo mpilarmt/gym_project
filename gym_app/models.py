@@ -1,6 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+#pilar2@pilar.com 5pGabST7wYpeAnj
+#p3@pilar.com 5pGabST7wYpeAnj
+
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Administrador'),
@@ -24,6 +28,7 @@ class User(AbstractUser):
         choices=ROLE_CHOICES, 
         default='user',
         help_text='Tipus d\'usuari')
+    
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'role']

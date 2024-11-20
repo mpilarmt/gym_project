@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+    <h2>Horari de Rutines</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Franja Horària</th>
+                {% for day_id, day_name in days %}
+                <th>{{ day_name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for slot_id, slot_name in time_slots %}
+            <tr>
+                <td>{{ slot_name }}</td>
+                {% for day_id, day_name in days %}
+                <td>
+                    {% with schedules=schedule_dict|get_item:day_id|get_item:slot_id %}
+                    {% if schedules %}
+                    <!-- Si hi ha rutina assignada, mostrar sense dropdown -->
+                    <div class="has-routine">
+                        {% for schedule in schedules %}
+                        <div class="p-2 mb-1 rounded" 
+                             style="background-color: {{ routine_colors|get_item:schedule.routine_id }}; opacity: 0.8;">
+                            <span class="d-flex justify-content-between align-items-center">
+                                <span class="fw-medium">
+                                    <a href="{% url 'gym_trainer:routine_details' schedule.routine.routine_id %}"
+                                        class="text-decoration-none" style="color: inherit;">
+                                        {{ schedule.routine.name }}
+                                    </a>
+                                </span>
+                                <a href="{% url 'gym_trainer:delete_schedule' schedule.schedule_id %}" 
+                                   class="btn btn-sm"
+                                   style="color: #ff4444; background: transparent; border: none;"
+                                   onclick="return confirm('Estàs segur que vols eliminar aquesta rutina de l\'horari?');">
+                                    ❌
+                                </a>
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <!-- Si no hi ha rutina, mostrar dropdown -->
+                    <div class="dropdown">
+                        <div class="schedule-cell" data-bs-toggle="dropdown">
+                            <div class="p-2 mb-1 rounded" style="background-color: #f0f0f0; opacity: 0.8;">
+                                <span class="text-muted">Sense programar</span>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown-menu p-3">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="weekday" value="{{ day_id }}">
+                                <input type="hidden" name="time_slot" value="{{ slot_id }}">
+                                <select name="routine" class="form-select mb-2">
+                                    
+                                    {% for routine in form.routine.field.choices %}
+                                    <option value="{{ routine.0 }}">{{ routine.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm w-100">Assignar</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/schedule.js' %}"></script>
+{% endblock %}

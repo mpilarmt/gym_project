@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center">Llista de Rutines</h2>
+
+<a href="{% url 'gym_trainer:create_routine' %}" class="btn btn-primary mb-3">Crear una Rutina</a>
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Nom</th>
+            <th>Descripció</th>
+            <th>Entrenador</th>
+            <th>Accions</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for routine in routines %}
+            <tr>
+                <td>{{ routine.name }}</td>
+                <td>{{ routine.description }}</td>
+                <td>{{ routine.trainer.username }}</td>
+                <td>
+                    <a href="{% url 'gym_trainer:routine_details' routine.routine_id %}" class="btn btn-info">Detalls</a>   
+                    <a href="{% url 'gym_trainer:edit_routine' routine.routine_id %}" class="btn btn-warning">Editar</a>
+                    <a href="{% url 'gym_trainer:delete_routine' routine.routine_id %}" class="btn btn-danger">Eliminar</a>
+                    
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No hi ha rutines disponibles.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

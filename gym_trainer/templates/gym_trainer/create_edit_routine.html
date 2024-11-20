@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{% if routine %}Editar{% else %}Crear{% endif %} Rutina</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <h3>Exercicis disponibles</h3>
+        {% for exercise in exercises %}
+            <div>
+                <input type="checkbox" name="exercises" value="{{ exercise.id }}" {% if exercise in routine.exercises.all %}checked{% endif %}>
+                <label>{{ exercise.name }}</label>
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,12 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Gym App{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'dist/bundle.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
+
 <body>
     <!--utilitzant bootstrap-->
     <header>
@@ -22,56 +25,77 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link {% if active_tab == 'home' %}active{% endif %}" 
-                                   href="{% url 'home' %}">Inici</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
-                                   role="button" data-bs-toggle="dropdown">
-                                    {{ user.username }}
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item {% if active_tab == 'profile' %}active{% endif %}" 
-                                           href="{% url 'profile_edit' %}">
-                                            Editar Perfil
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'logout' %}">Tancar Sessió</a>
-                                    </li>
-                                </ul>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if active_tab == 'home' %}active{% endif %}"
+                                href="{% url 'home' %}">Inici</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                {{ user.username }}-{{ user.role }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item {% if active_tab == 'profile' %}active{% endif %}"
+                                        href="{% url 'profile_edit' %}">
+                                        Editar Perfil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'logout' %}">Tancar Sessió</a>
+                                </li>
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                               
+
+                                {% if user.role == 'trainer' %}
+                            
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'gym_trainer:routine_list' %}">Rutines</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'gym_trainer:exercise_list' %}">Exercicis</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'gym_trainer:schedule' %}">Horari</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+
                         {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'login' %}">Iniciar Sessió</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'register' %}">Registrar-se</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Iniciar Sessió</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Registrar-se</a>
+                        </li>
                         {% endif %}
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container"> 
+    <div class="container">
         {% if messages %}
         <br>
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
         {% endif %}
     </div>
-    
+
     <main class="container py-4">
         {% block content %}
+        {% endblock %}
+        {% block scripts %}
         {% endblock %}
     </main>
     <script src="{% static 'dist/bundle.js' %}"></script>
 </body>
+
 </html>

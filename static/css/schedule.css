@@ -1,0 +1,12 @@
+.schedule-cell {
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.has-routine {
+    cursor: default;
+}

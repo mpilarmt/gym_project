@@ -3,16 +3,20 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm, UserUpdateForm
+from django.db import DatabaseError
 
 
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Registre completat amb èxit!')
-            return redirect('home')
+            try:
+                user = form.save()
+                login(request, user)
+                messages.success(request, 'Registre completat amb èxit!')
+                return redirect('home')
+            except DatabaseError as e:
+                messages.error(request, 'Error en el registre. Si us plau, corregeix els errors.')
         else:
             messages.error(request, 'Error en el registre. Si us plau, corregeix els errors.')
     else:
@@ -29,6 +33,8 @@ def user_login(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Has iniciat sessió correctament!')
+                if user.role == 'trainer':
+                    return redirect('gym_trainer:routine_list')
                 return redirect('home')
             else:
                 messages.error(request, 'Email o contrasenya incorrectes.')

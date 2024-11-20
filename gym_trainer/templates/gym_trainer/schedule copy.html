@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container">
+
+    <h2>Horari de Rutines</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Franja Horària</th>
+                {% for day_id, day_name in days %}
+                <th>{{ day_name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for slot_id, slot_name in time_slots %}
+            <tr>
+                <td>{{ slot_name }}</td>
+                {% for day_id, day_name in days %}
+                <td>
+                    {% with schedules=schedule_dict|get_item:day_id|get_item:slot_id %}
+                    {% if schedules %}
+                    {% for schedule in schedules %}
+
+
+                    <div class="p-2 mb-1 rounded" style="background-color: {{ routine_colors|get_item:schedule.routine_id }}; 
+            opacity: 0.8;">
+                        <span class="d-flex justify-content-between align-items-center">
+                            <span class="fw-medium">
+                                <a href="{% url 'gym_trainer:routine_details' schedule.routine.routine_id %}"
+                                    class="text-decoration-none" style="color: inherit;">
+                                    {{ schedule.routine.name }}
+                                </a>
+
+                            </span>
+                            <a href="{% url 'gym_trainer:delete_schedule' schedule.schedule_id %}" class="btn btn-sm"
+                                style="color: #ff4444; background: transparent; border: none;"
+                                onclick="return confirm('Estàs segur que vols eliminar aquesta rutina de l\'horari?');">
+                                ❌
+                            </a>
+                        </span>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="p-2 mb-1 rounded" style="background-color: #f0f0f0; opacity: 0.8;">
+                        <span class="text-muted">Sense programar</span>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="container mt-5">
+
+
+    <h1>Assignar Horari</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_routine">Rutina:</label>
+            {{ form.routine }}
+            {% if form.routine.errors %}
+            <div class="alert alert-danger">
+                {{ form.routine.errors }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_weekday">Dia:</label>
+            {{ form.weekday }}
+            {% if form.weekday.errors %}
+            <div class="alert alert-danger">
+                {{ form.weekday.errors }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_time_slot">Hora:</label>
+            {{ form.time_slot }}
+            {% if form.time_slot.errors %}
+            <div class="alert alert-danger">
+                {{ form.time_slot.errors }}
+            </div>
+            {% endif %}
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock %}

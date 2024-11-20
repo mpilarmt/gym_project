@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Llista d'Exercicis</h1>
+    <a href="{% url 'gym_trainer:create_exercise' %}" class="btn btn-primary mb-3">Crear Nou Exercici</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Descripció</th>
+                <th>Durada (minuts)</th>
+                <th>Accions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for exercise in exercises %}
+            <tr>
+
+                <td>{{ exercise.name }}</td>
+                <td>{{ exercise.description }}</td>
+                <td>{{ exercise.duration_minutes }}</td>
+                <td>
+                    <a href="{% url 'gym_trainer:edit_exercise' exercise.get_id %}"
+                        class="btn btn-warning btn-sm">Editar</a>
+
+                    <a href="{% url 'gym_trainer:delete_exercise' exercise.get_id %}"
+                        class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No hi ha exercicis disponibles.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
