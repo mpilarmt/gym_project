@@ -74,7 +74,11 @@ def routine_detail(request, routine_id):
 @login_required
 @user_passes_test(is_trainer)
 def routine_list(request):
-    routines = Routine.objects.all()  # Obtenim totes les rutines
+    routines = Routine.objects.all()
+    # Obtenim totes les rutines
+    for routine in routines:
+        print(routine.name)
+        
     return render(request, 'gym_trainer/routine_list.html', {'routines': routines})
 
 @login_required
